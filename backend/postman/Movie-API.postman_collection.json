@@ -1,0 +1,184 @@
+{
+  "info": {
+    "name": "Movie API - UTS KEPL",
+    "description": "Collection untuk menguji Movie RESTful API (Laravel + Sanctum). Jalankan 'Login' dulu, token otomatis tersimpan ke variabel {{token}}.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://127.0.0.1:8000/api" },
+    { "key": "token", "value": "" },
+    { "key": "movie_id", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "1. Login (200)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+              "var json = pm.response.json();",
+              "if (json.token) { pm.collectionVariables.set('token', json.token); }"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"password123\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/login", "host": ["{{base_url}}"], "path": ["login"] }
+      }
+    },
+    {
+      "name": "2. Login password salah (401)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"salah\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/login", "host": ["{{base_url}}"], "path": ["login"] }
+      }
+    },
+    {
+      "name": "3. Login validasi gagal (422)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{}" },
+        "url": { "raw": "{{base_url}}/login", "host": ["{{base_url}}"], "path": ["login"] }
+      }
+    },
+    {
+      "name": "4. Movies - Index (200)",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Accept", "value": "application/json" }],
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+        "url": { "raw": "{{base_url}}/movies", "host": ["{{base_url}}"], "path": ["movies"] }
+      }
+    },
+    {
+      "name": "5. Movies - Show (200)",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Accept", "value": "application/json" }],
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+        "url": { "raw": "{{base_url}}/movies/{{movie_id}}", "host": ["{{base_url}}"], "path": ["movies", "{{movie_id}}"] }
+      }
+    },
+    {
+      "name": "6. Movies - Store (201)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status 201', function () { pm.response.to.have.status(201); });",
+              "var json = pm.response.json();",
+              "if (json.data && json.data.id) { pm.collectionVariables.set('movie_id', json.data.id); }"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Interstellar\",\n  \"director\": \"Christopher Nolan\",\n  \"genre\": \"Sci-Fi\",\n  \"release_year\": 2014,\n  \"rating\": 8.7,\n  \"synopsis\": \"Misi mencari planet baru untuk umat manusia.\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/movies", "host": ["{{base_url}}"], "path": ["movies"] }
+      }
+    },
+    {
+      "name": "7. Movies - Store validasi gagal (422)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"\",\n  \"release_year\": \"bukan-angka\",\n  \"rating\": 99\n}"
+        },
+        "url": { "raw": "{{base_url}}/movies", "host": ["{{base_url}}"], "path": ["movies"] }
+      }
+    },
+    {
+      "name": "8. Movies - Update (200)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Interstellar (Edited)\",\n  \"rating\": 9.0\n}"
+        },
+        "url": { "raw": "{{base_url}}/movies/{{movie_id}}", "host": ["{{base_url}}"], "path": ["movies", "{{movie_id}}"] }
+      }
+    },
+    {
+      "name": "9. Movies - Tanpa token (401)",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Accept", "value": "application/json" }],
+        "auth": { "type": "noauth" },
+        "url": { "raw": "{{base_url}}/movies", "host": ["{{base_url}}"], "path": ["movies"] }
+      }
+    },
+    {
+      "name": "10. Movies - Destroy (200)",
+      "request": {
+        "method": "DELETE",
+        "header": [{ "key": "Accept", "value": "application/json" }],
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+        "url": { "raw": "{{base_url}}/movies/{{movie_id}}", "host": ["{{base_url}}"], "path": ["movies", "{{movie_id}}"] }
+      }
+    },
+    {
+      "name": "11. Logout (200)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Accept", "value": "application/json" }],
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+        "url": { "raw": "{{base_url}}/logout", "host": ["{{base_url}}"], "path": ["logout"] }
+      }
+    },
+    {
+      "name": "12. Setelah logout, token ditolak (401)",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Accept", "value": "application/json" }],
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+        "url": { "raw": "{{base_url}}/movies", "host": ["{{base_url}}"], "path": ["movies"] }
+      }
+    }
+  ]
+}
