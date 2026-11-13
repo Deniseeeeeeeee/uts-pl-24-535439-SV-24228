@@ -1,0 +1,5 @@
+﻿PS> docker compose start db
+ Container uts-pl-24-535439-sv-24228-db-1 Starting 
+ Container uts-pl-24-535439-sv-24228-db-1 Started 
+
+app kembali healthy setelah ~3 detik

@@ -1,0 +1,11 @@
+﻿PS> curl.exe -s -i http://localhost:8000/health
+HTTP/1.1 200 OK
+Date: Fri, 13 Nov 2026 15:35:25 GMT
+Server: Apache/2.4.69 (Debian)
+X-Powered-By: PHP/8.2.35
+Cache-Control: no-cache, private
+Transfer-Encoding: chunked
+Content-Type: application/json
+
+{"status":"ok","checks":{"database":{"status":"ok","latency_ms":3.63},"cache":{"status":"ok","driver":"file","latency_ms":1.24}},"timestamp":"2026-11-13T15:35:25+00:00"}
+

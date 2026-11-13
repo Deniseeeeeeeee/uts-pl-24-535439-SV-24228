@@ -1,0 +1,12 @@
+﻿PS> curl.exe -s -i http://localhost:8000/health
+HTTP/1.1 503 Service Unavailable
+Date: Fri, 13 Nov 2026 15:36:16 GMT
+Server: Apache/2.4.69 (Debian)
+X-Powered-By: PHP/8.2.35
+Cache-Control: no-cache, private
+Connection: close
+Transfer-Encoding: chunked
+Content-Type: application/json
+
+{"status":"fail","checks":{"database":{"status":"fail","error":"Tidak dapat terhubung ke database"},"cache":{"status":"ok","driver":"file","latency_ms":15.31}},"timestamp":"2026-11-13T15:36:21+00:00","failed":["database"]}
+

@@ -1,0 +1,18 @@
+﻿PS> docker compose exec -T app printenv LOG_CHANNEL LOG_STDERR_FORMATTER
+stderr
+Monolog\Formatter\JsonFormatter
+
+PS> docker compose exec -T app ls -la storage/logs /var/log/apache2
+/var/log/apache2:
+total 8
+drwxrwxrwt 2 www-data www-data 4096 Nov  5 07:27 .
+drwxr-xr-x 1 root     root     4096 Nov  5 07:27 ..
+lrwxrwxrwx 1 www-data www-data   11 Nov  5 07:27 access.log -> /dev/stdout
+lrwxrwxrwx 1 www-data www-data   11 Nov  5 07:27 error.log -> /dev/stderr
+lrwxrwxrwx 1 www-data www-data   11 Nov  5 07:27 other_vhosts_access.log -> /dev/stdout
+
+storage/logs:
+total 12
+drwxr-xr-x 1 www-data www-data 4096 Oct 24 09:26 .
+drwxr-xr-x 1 www-data www-data 4096 Feb 13  2024 ..
+

@@ -1,0 +1,17 @@
+﻿PS> docker compose ps
+NAME                                   IMAGE                                                                     COMMAND                  SERVICE    CREATED              STATUS                        PORTS
+uts-pl-24-535439-sv-24228-app-1        uts-pl-24-535439-sv-24228-app                                             "docker-php-entrypoi…"   app        About a minute ago   Up About a minute (healthy)   0.0.0.0:8000->80/tcp, [::]:8000->80/tcp
+uts-pl-24-535439-sv-24228-db-1         mysql:8.0                                                                 "docker-entrypoint.s…"   db         12 minutes ago       Up 11 seconds (healthy)       3306/tcp, 33060/tcp
+uts-pl-24-535439-sv-24228-frontend-1   sha256:d48653450ff5b19bf6de5339e47b73b45ca67532d381111dde65f327a0d31211   "/docker-entrypoint.…"   frontend   12 minutes ago       Up 6 minutes (healthy)        0.0.0.0:8080->80/tcp, [::]:8080->80/tcp
+
+PS> curl.exe -s -i http://localhost:8000/health
+HTTP/1.1 200 OK
+Date: Fri, 13 Nov 2026 15:36:34 GMT
+Server: Apache/2.4.69 (Debian)
+X-Powered-By: PHP/8.2.35
+Cache-Control: no-cache, private
+Transfer-Encoding: chunked
+Content-Type: application/json
+
+{"status":"ok","checks":{"database":{"status":"ok","latency_ms":2.6},"cache":{"status":"ok","driver":"file","latency_ms":1.53}},"timestamp":"2026-11-13T15:36:34+00:00"}
+
