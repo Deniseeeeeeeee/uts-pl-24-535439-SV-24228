@@ -27,4 +27,10 @@ COPY . .
 RUN composer dump-autoload --optimize --no-dev --no-interaction \
     && chown -R www-data:www-data storage bootstrap/cache
 
+# Skrip start: migrasi + seed, lalu jalankan Apache.
+# sed membuang karakter CRLF (kalau file dibuat di Windows) supaya skrip bisa jalan di Linux.
+RUN sed -i 's/\r$//' docker-entrypoint.sh && chmod +x docker-entrypoint.sh
+
 EXPOSE 80
+
+CMD ["./docker-entrypoint.sh"]
