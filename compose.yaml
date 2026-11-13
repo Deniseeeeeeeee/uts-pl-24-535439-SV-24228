@@ -1,0 +1,109 @@
+# ------------------------------------------------------------
+# P10: logging driver json-file dengan rotasi.
+# Log container disimpan Docker sebagai file JSON; tiap file maksimal
+# 10 MB dan hanya 3 file terakhir yang disimpan (maks ~30 MB per service),
+# supaya disk host tidak penuh oleh log.
+# ------------------------------------------------------------
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  # ------------------------------------------------------------
+  # 6a: service basis data (MySQL)
+  # ------------------------------------------------------------
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      # 6d: data disimpan di named volume, tetap ada setelah "docker compose down"
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+    logging: *default-logging
+
+  # ------------------------------------------------------------
+  # 6a: service backend Laravel (Apache + mod_php)
+  # 6b: terhubung ke basis data lewat nama service "db"
+  # ------------------------------------------------------------
+  app:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      APP_NAME: "Movie API"
+      APP_ENV: production
+      APP_DEBUG: "false"
+      APP_KEY: ${APP_KEY}
+      APP_URL: http://localhost:8080
+      # P10: log Laravel ke stderr container (bukan storage/logs/laravel.log),
+      # dalam format JSON supaya context array terbaca sebagai field.
+      LOG_CHANNEL: stderr
+      LOG_STDERR_FORMATTER: Monolog\Formatter\JsonFormatter
+      LOG_LEVEL: info
+      CACHE_DRIVER: file
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_CONNECT_TIMEOUT: 3
+    # P10: DNS lookup ke host "db" yang sedang mati bisa makan ~15 detik.
+    # Batasi supaya /health cepat membalas 503, bukan menggantung.
+    dns_opt:
+      - timeout:1
+      - attempts:1
+    ports:
+      # Opsional: supaya API dan /health bisa diuji langsung dari laptop
+      - "8000:80"
+    # P10: Docker memanggil GET /health di dalam container.
+    # /health membalas 503 kalau DB/cache gagal -> curl -f keluar non-zero -> unhealthy.
+    healthcheck:
+      # Saat DB mati, lookup DNS "db" masih butuh ~5 detik, jadi batas curl 8 detik.
+      test: ["CMD", "curl", "-fsS", "--max-time", "8", "http://localhost/health"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging: *default-logging
+
+  # ------------------------------------------------------------
+  # 6a: service frontend Vue (Nginx)
+  # 6b: Nginx meneruskan /api ke service "app" (lihat frontend/nginx.conf)
+  # ------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: /api
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+    ports:
+      - "8080:80"
+    # wget sudah tersedia di image nginx:alpine (BusyBox)
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging: *default-logging
+
+volumes:
+  db_data:
