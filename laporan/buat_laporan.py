@@ -245,6 +245,8 @@ dengan <code>dns_opt timeout:1 attempts:1</code> dan <code>PDO::ATTR_TIMEOUT=3</
 <h2>6. Cuplikan compose.yaml</h2>
 <h3>Logging driver (json-file + rotasi)</h3>
 {pre(compose_block("x-logging", r"^services:"))}
+<p>Konfigurasi yang benar-benar aktif di container (<code>docker inspect</code>):</p>
+{pre(read("02c-log-limit.txt"))}
 <h3>Healthcheck service app</h3>
 {pre(service_block("app", "healthcheck"))}
 <h3>Healthcheck service frontend & db</h3>

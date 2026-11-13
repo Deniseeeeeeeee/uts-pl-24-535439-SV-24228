@@ -99,6 +99,13 @@ Header '2b. Bukti log tidak ditulis ke file di container'
 Run '02b-log-ke-stderr.txt' 'docker compose exec -T app printenv LOG_CHANNEL LOG_STDERR_FORMATTER'
 Run '02b-log-ke-stderr.txt' 'docker compose exec -T app ls -la storage/logs /var/log/apache2' -Append
 
+Header '2c. Bukti pembatasan ukuran log (json-file, max-size, max-file)'
+foreach ($svc in 'db', 'app', 'frontend') {
+    $id = (cmd /c "docker compose ps -q $svc").Trim()
+    Run '02c-log-limit.txt' "docker inspect -f ""$svc {{json .HostConfig.LogConfig}}"" $id" -Append
+}
+Pause-Step 'Langkah 2c: LogConfig json-file max-size 10m max-file 3.'
+
 # ------------------------------------------------------------------
 Header '3. curl -i /health (sehat)'
 Run '03-health-sehat.txt' "curl.exe -s -i $Base/health"
