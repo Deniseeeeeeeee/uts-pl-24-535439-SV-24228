@@ -52,10 +52,14 @@ function Note($file, $text) {
 }
 
 function Wait-Health($service, $target, $maxSeconds = 180) {
-    $name = (cmd /c "docker compose ps -q $service").Trim()
+    $name = "$(cmd /c "docker compose ps -q $service 2>nul")".Trim()
+    if (-not $name) {
+        Write-Host "  Container $service tidak ditemukan. Skenario dihentikan." -ForegroundColor Red
+        exit 1
+    }
     $sw = [Diagnostics.Stopwatch]::StartNew()
     while ($sw.Elapsed.TotalSeconds -lt $maxSeconds) {
-        $s = (cmd /c "docker inspect -f {{.State.Health.Status}} $name 2>nul").Trim()
+        $s = "$(cmd /c "docker inspect -f {{.State.Health.Status}} $name 2>nul")".Trim()
         Write-Host ("  [{0,3}s] {1}: {2}" -f [int]$sw.Elapsed.TotalSeconds, $service, $s)
         if ($s -eq $target) { return [int]$sw.Elapsed.TotalSeconds }
         Start-Sleep -Seconds 3
@@ -84,6 +88,16 @@ function Send($method, $path, $body = $null, $token = $null) {
 }
 
 # ------------------------------------------------------------------
+# Cek dulu Docker Desktop sudah jalan, supaya file bukti tidak terisi error
+cmd /c "docker info >nul 2>nul"
+if ($LASTEXITCODE -ne 0) {
+    Write-Host ''
+    Write-Host 'Docker belum jalan.' -ForegroundColor Red
+    Write-Host 'Buka aplikasi Docker Desktop, tunggu sampai statusnya "Engine running",' -ForegroundColor Red
+    Write-Host 'lalu jalankan skrip ini lagi.' -ForegroundColor Red
+    exit 1
+}
+
 Header '1. docker compose up -d --build'
 Run '01-up-build.txt' 'docker compose up -d --build'
 Note '01-up-build.txt' 'Menunggu service app menjadi healthy...'
