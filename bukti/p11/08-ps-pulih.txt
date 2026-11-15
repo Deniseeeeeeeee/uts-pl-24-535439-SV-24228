@@ -1,0 +1,10 @@
+﻿PS> docker compose ps --format "table {{.Service}}\t{{.Status}}"
+SERVICE         STATUS
+app             Up 4 minutes (healthy)
+cadvisor        Up 13 minutes (healthy)
+db              Up 38 seconds (healthy)
+frontend        Up About an hour (healthy)
+grafana         Up 16 minutes (healthy)
+node-exporter   Up 16 minutes
+prometheus      Up 16 minutes (healthy)
+

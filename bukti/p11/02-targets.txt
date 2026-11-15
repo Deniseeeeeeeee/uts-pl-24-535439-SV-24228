@@ -1,0 +1,6 @@
+﻿JOB             ENDPOINT               STATUS
+cadvisor        cadvisor:8080/metrics  UP
+grafana         grafana:3000/metrics   UP
+movie-app       app:80/metrics         UP
+node-exporter   node-exporter:9100/metrics UP
+prometheus      localhost:9090/metrics UP

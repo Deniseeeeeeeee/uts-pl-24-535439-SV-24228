@@ -1,0 +1,570 @@
+{
+  "uid": "movie-app-p11",
+  "title": "Movie App — Kesehatan & Kinerja",
+  "description": "Dashboard P11: apakah layanan hidup, berapa beban dan error aplikasi, dan berapa sumber daya yang dipakai tiap container.",
+  "tags": [
+    "movie-app",
+    "p11"
+  ],
+  "timezone": "browser",
+  "editable": true,
+  "schemaVersion": 41,
+  "version": 1,
+  "refresh": "10s",
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "graphTooltip": 1,
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Apakah semua layanan sedang hidup?",
+      "description": "1 = HIDUP, 0 = MATI. Baris 'up' berasal dari keberhasilan Prometheus men-scrape tiap target; baris database/cache berasal dari pemeriksaan langsung oleh aplikasi (app_dependency_up).",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 18,
+        "h": 5
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "MATI",
+                  "color": "red",
+                  "index": 0
+                },
+                "1": {
+                  "text": "HIDUP",
+                  "color": "green",
+                  "index": 1
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value_and_name",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "wideLayout": true,
+        "text": {
+          "titleSize": 15,
+          "valueSize": 30
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "max by (job) (up)",
+          "legendFormat": "{{job}}",
+          "refId": "A",
+          "instant": true,
+          "range": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "max by (component) (app_dependency_up)",
+          "legendFormat": "{{component}} (dicek app)",
+          "refId": "B",
+          "instant": true,
+          "range": false
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Berapa film di katalog saat ini?",
+      "description": "Jumlah baris di tabel movies.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 18,
+        "y": 0,
+        "w": 6,
+        "h": 5
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "wideLayout": true,
+        "text": {
+          "titleSize": 15,
+          "valueSize": 30
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "max(app_movies_total)",
+          "legendFormat": "film",
+          "refId": "A",
+          "instant": true,
+          "range": false
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Berapa permintaan per detik yang dilayani aplikasi?",
+      "description": "Laju request pengguna ke aplikasi per route, rata-rata 5 menit terakhir. Pemanggilan /health dan /metrics oleh sistem tidak dihitung.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 5,
+        "w": 12,
+        "h": 9
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "min": 0,
+          "custom": {
+            "axisLabel": "permintaan / detik",
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": true,
+            "axisPlacement": "left"
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum by (route) (rate(app_http_requests_total{route!~\"/health|/metrics|unmatched\"}[5m]))",
+          "legendFormat": "{{route}}",
+          "refId": "A",
+          "range": true
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Berapa persen permintaan yang berakhir error server (5xx)?",
+      "description": "Porsi request berstatus 5xx dibanding seluruh request pengguna (5 menit). Naik tajam saat database mati.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 5,
+        "w": 12,
+        "h": 9
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "custom": {
+            "axisLabel": "persentase error",
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": true,
+            "axisPlacement": "left"
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "max": 1
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "(sum(rate(app_http_requests_total{route!~\"/health|/metrics|unmatched\",status=~\"5..\"}[5m])) or vector(0)) / clamp_min(sum(rate(app_http_requests_total{route!~\"/health|/metrics|unmatched\"}[5m])), 1e-9)",
+          "legendFormat": "error 5xx",
+          "refId": "A",
+          "range": true
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Container mana yang paling banyak memakai CPU?",
+      "description": "Pemakaian CPU per container dari cAdvisor. 100% = satu core penuh.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 14,
+        "w": 12,
+        "h": 9
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "custom": {
+            "axisLabel": "CPU (1 core = 100%)",
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": true,
+            "axisPlacement": "left"
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum by (container_label_com_docker_compose_service) (rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_project=\"uts-pl-24-535439-sv-24228\"}[5m]))",
+          "legendFormat": "{{container_label_com_docker_compose_service}}",
+          "refId": "A",
+          "range": true
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "Berapa memori yang dipakai tiap container?",
+      "description": "Working set memory per container dari cAdvisor (memori yang benar-benar dipakai, tidak termasuk cache yang bisa dibuang).",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 14,
+        "w": 12,
+        "h": 9
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "min": 0,
+          "custom": {
+            "axisLabel": "memori",
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": true,
+            "axisPlacement": "left"
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum by (container_label_com_docker_compose_service) (container_memory_working_set_bytes{container_label_com_docker_compose_project=\"uts-pl-24-535439-sv-24228\"})",
+          "legendFormat": "{{container_label_com_docker_compose_service}}",
+          "refId": "A",
+          "range": true
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "Seberapa lambat respons API untuk 95% permintaan?",
+      "description": "Persentil ke-95 waktu respons per route (histogram app_http_request_duration_seconds, 5 menit).",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 23,
+        "w": 12,
+        "h": 9
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "min": 0,
+          "custom": {
+            "axisLabel": "waktu respons",
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": true,
+            "axisPlacement": "left"
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (le, route) (rate(app_http_request_duration_seconds_bucket{route!~\"/health|/metrics|unmatched\"}[5m])))",
+          "legendFormat": "p95 {{route}}",
+          "refId": "A",
+          "range": true
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "type": "timeseries",
+      "title": "Seberapa sibuk CPU dan memori mesin host?",
+      "description": "Data node-exporter untuk mesin (VM Docker) tempat semua container berjalan.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 23,
+        "w": 12,
+        "h": 9
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "custom": {
+            "axisLabel": "pemakaian",
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "showPoints": "never",
+            "spanNulls": true,
+            "axisPlacement": "left"
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "max": 1
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "1 - avg(rate(node_cpu_seconds_total{mode=\"idle\"}[5m]))",
+          "legendFormat": "CPU host",
+          "refId": "A",
+          "range": true
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "1 - avg(node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)",
+          "legendFormat": "memori host",
+          "refId": "B",
+          "range": true
+        }
+      ]
+    }
+  ],
+  "templating": {
+    "list": []
+  },
+  "annotations": {
+    "list": []
+  }
+}

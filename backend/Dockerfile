@@ -1,10 +1,13 @@
 FROM php:8.2-apache
 
 # Ekstensi PHP yang dibutuhkan Laravel + driver MySQL, mod_rewrite untuk routing,
-# dan curl untuk HEALTHCHECK (memanggil GET /health)
+# dan curl untuk HEALTHCHECK (memanggil GET /health).
+# P11: APCu = memori bersama antar proses Apache, tempat menyimpan penghitung /metrics.
 RUN apt-get update \
     && apt-get install -y --no-install-recommends unzip git libzip-dev curl \
     && docker-php-ext-install pdo_mysql zip \
+    && pecl install apcu-5.1.24 \
+    && docker-php-ext-enable apcu \
     && a2enmod rewrite \
     && rm -rf /var/lib/apt/lists/*
 
