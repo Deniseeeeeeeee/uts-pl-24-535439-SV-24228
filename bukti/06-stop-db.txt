@@ -3,5 +3,5 @@
  Container uts-pl-24-535439-sv-24228-db-1 Stopped 
 
 Menunggu service app menjadi unhealthy...
-app unhealthy setelah ~39 detik
+app unhealthy setelah ~28 detik
 [ERROR] GET /api/movies saat DB mati -> HTTP 500

@@ -1,6 +1,6 @@
 ﻿PS> docker compose ps -a
-NAME                                   IMAGE                                                                     COMMAND                  SERVICE    CREATED              STATUS                      PORTS
-uts-pl-24-535439-sv-24228-app-1        uts-pl-24-535439-sv-24228-app                                             "docker-php-entrypoi…"   app        About a minute ago   Up 59 seconds (unhealthy)   0.0.0.0:8000->80/tcp, [::]:8000->80/tcp
-uts-pl-24-535439-sv-24228-db-1         mysql:8.0                                                                 "docker-entrypoint.s…"   db         12 minutes ago       Exited (0) 45 seconds ago   
-uts-pl-24-535439-sv-24228-frontend-1   sha256:d48653450ff5b19bf6de5339e47b73b45ca67532d381111dde65f327a0d31211   "/docker-entrypoint.…"   frontend   12 minutes ago       Up 6 minutes (healthy)      0.0.0.0:8080->80/tcp, [::]:8080->80/tcp
+NAME                                   IMAGE                                                                     COMMAND                  SERVICE    CREATED         STATUS                        PORTS
+uts-pl-24-535439-sv-24228-app-1        uts-pl-24-535439-sv-24228-app                                             "docker-php-entrypoi…"   app        2 minutes ago   Up 2 minutes (unhealthy)      0.0.0.0:8000->80/tcp, [::]:8000->80/tcp
+uts-pl-24-535439-sv-24228-db-1         mysql:8.0                                                                 "docker-entrypoint.s…"   db         2 days ago      Exited (137) 34 seconds ago   
+uts-pl-24-535439-sv-24228-frontend-1   sha256:d48653450ff5b19bf6de5339e47b73b45ca67532d381111dde65f327a0d31211   "/docker-entrypoint.…"   frontend   2 days ago      Up 4 minutes (healthy)        0.0.0.0:8080->80/tcp, [::]:8080->80/tcp
 

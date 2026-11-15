@@ -1,0 +1,9 @@
+﻿PS> docker inspect -f "db {{json .HostConfig.LogConfig}}" 52d99fa7adce92b013f759fd49f7a153320312227f7a5e89043091853b2f4ebd
+db {"Type":"json-file","Config":{"max-file":"3","max-size":"10m"}}
+
+PS> docker inspect -f "app {{json .HostConfig.LogConfig}}" 4c3dffdef7cf36183e5fbea50cce7645b8ed168d273d2bd7137692ad275931b8
+app {"Type":"json-file","Config":{"max-file":"3","max-size":"10m"}}
+
+PS> docker inspect -f "frontend {{json .HostConfig.LogConfig}}" 02fcc3499b985de761eac8c4d099877074cbfc0c8c94a2206d813a645c533b83
+frontend {"Type":"json-file","Config":{"max-file":"3","max-size":"10m"}}
+
