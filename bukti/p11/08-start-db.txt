@@ -2,4 +2,4 @@
  Container uts-pl-24-535439-sv-24228-db-1 Starting 
  Container uts-pl-24-535439-sv-24228-db-1 Started 
 
-Alarm DatabaseAplikasiTidakTerjangkau kembali inactive setelah ~30 detik
+Alarm DatabaseAplikasiTidakTerjangkau kembali inactive setelah ~20 detik

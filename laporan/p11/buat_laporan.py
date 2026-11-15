@@ -123,6 +123,8 @@ Pada saat yang sama, dashboard Grafana menunjukkan dampak gangguan dari sisi apl
 menampilkan database (dicek app) dalam keadaan MATI, sementara service lain tetap HIDUP. Panel
 persentase error 5xx naik karena request ke /api/movies dibalas HTTP 500. Panel waktu respons p95 juga
 meningkat karena setiap request menunggu koneksi database yang gagal.
+Panel jumlah film menampilkan <i>No data</i> secara sengaja: saat database tidak terjangkau,
+endpoint /metrics tidak mengirim app_movies_total sehingga tidak muncul angka 0 yang menyesatkan.
 """),
     ("08-alert-pulih", f"""
 Setelah db dinyalakan kembali dengan <i>docker compose start db</i>, scrape berikutnya melaporkan

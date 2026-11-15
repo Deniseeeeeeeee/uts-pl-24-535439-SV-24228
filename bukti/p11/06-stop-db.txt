@@ -2,9 +2,8 @@
  Container uts-pl-24-535439-sv-24228-db-1 Stopping 
  Container uts-pl-24-535439-sv-24228-db-1 Stopped 
 
-[ 11s] DatabaseAplikasiTidakTerjangkau = inactive
-[ 22s] DatabaseAplikasiTidakTerjangkau = inactive
-[ 41s] DatabaseAplikasiTidakTerjangkau = pending
-[ 59s] DatabaseAplikasiTidakTerjangkau = pending
-[ 77s] DatabaseAplikasiTidakTerjangkau = pending
-[ 95s] DatabaseAplikasiTidakTerjangkau = firing
+[ 19s] DatabaseAplikasiTidakTerjangkau = pending
+[ 36s] DatabaseAplikasiTidakTerjangkau = pending
+[ 54s] DatabaseAplikasiTidakTerjangkau = pending
+[ 72s] DatabaseAplikasiTidakTerjangkau = pending
+[ 90s] DatabaseAplikasiTidakTerjangkau = firing
