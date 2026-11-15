@@ -1,0 +1,47 @@
+# Konfigurasi Prometheus (P11)
+# Semua target dipanggil lewat nama service di jaringan Docker Compose.
+
+global:
+  scrape_interval: 15s      # seberapa sering metrik diambil
+  evaluation_interval: 15s  # seberapa sering aturan alarm dievaluasi
+
+rule_files:
+  - /etc/prometheus/alerts.yml
+
+scrape_configs:
+  # Prometheus memantau dirinya sendiri
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+        labels:
+          service: prometheus   # nama service di compose.yaml
+
+  # Aplikasi Laravel: jumlah request, waktu respons, status DB & cache (GET /metrics)
+  - job_name: movie-app
+    metrics_path: /metrics
+    scrape_timeout: 10s
+    static_configs:
+      - targets: ["app:80"]
+        labels:
+          service: app   # nama service di compose.yaml
+
+  # CPU & memori per container
+  - job_name: cadvisor
+    static_configs:
+      - targets: ["cadvisor:8080"]
+        labels:
+          service: cadvisor   # nama service di compose.yaml
+
+  # CPU, memori, disk mesin host (VM Docker)
+  - job_name: node-exporter
+    static_configs:
+      - targets: ["node-exporter:9100"]
+        labels:
+          service: node-exporter   # nama service di compose.yaml
+
+  # Grafana juga mengekspos metrik internalnya
+  - job_name: grafana
+    static_configs:
+      - targets: ["grafana:3000"]
+        labels:
+          service: grafana   # nama service di compose.yaml

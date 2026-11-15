@@ -1,0 +1,40 @@
+# Aturan alarm Prometheus (P11)
+# Setiap alarm punya "for:" supaya gangguan sesaat (mis. satu scrape gagal)
+# tidak langsung membangunkan orang, dan anotasi "tindakan_pertama" berisi
+# langkah pertama yang harus dilakukan penerima alarm.
+
+groups:
+  - name: movie-app
+    rules:
+      - alert: DatabaseAplikasiTidakTerjangkau
+        expr: app_dependency_up{component="database"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: db
+        annotations:
+          summary: "Aplikasi Movie API tidak bisa terhubung ke database"
+          description: >-
+            Selama lebih dari 1 menit, aplikasi ({{ $labels.instance }}) gagal menjalankan
+            SELECT 1 ke MySQL. Semua endpoint /api/* yang membaca data akan membalas HTTP 500,
+            dan /health membalas 503.
+          tindakan_pertama: >-
+            Jalankan "docker compose ps db" untuk melihat apakah container db berhenti.
+            Kalau statusnya Exited, nyalakan dengan "docker compose start db" lalu pastikan
+            /health kembali 200. Kalau masih Up, periksa "docker compose logs --tail 50 db"
+            dan "docker compose logs --tail 50 app" untuk melihat sebab kegagalannya.
+
+      - alert: TargetPemantauanMati
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Target {{ $labels.job }} tidak bisa di-scrape Prometheus"
+          description: >-
+            Prometheus gagal mengambil metrik dari {{ $labels.instance }} (job {{ $labels.job }})
+            selama lebih dari 1 menit. Layanan itu kemungkinan mati atau tidak bisa dijangkau.
+          tindakan_pertama: >-
+            Buka http://localhost:9090/targets untuk membaca pesan error scrape, lalu jalankan
+            "docker compose ps {{ $labels.service }}" dan "docker compose logs --tail 50 {{ $labels.service }}".
+            Nyalakan ulang dengan "docker compose up -d {{ $labels.service }}" bila container berhenti.

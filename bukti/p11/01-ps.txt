@@ -1,0 +1,10 @@
+﻿PS> docker compose ps --format "table {{.Service}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}"
+SERVICE         IMAGE                                                                     STATUS                 PORTS
+app             sha256:e26c6784abafb3c4fcbc0387e76810f95594c0320d35a067e85e39fa663dd56c   Up 4 hours (healthy)   0.0.0.0:8000->80/tcp, [::]:8000->80/tcp
+cadvisor        gcr.io/cadvisor/cadvisor:v0.54.1                                          Up 4 hours (healthy)   127.0.0.1:8081->8080/tcp
+db              mysql:8.0                                                                 Up 4 hours (healthy)   3306/tcp, 33060/tcp
+frontend        sha256:76dfcd141612f7366be0363a150ff06722b1b309b2ec5422efa857d8cdaf4aa5   Up 4 hours (healthy)   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp
+grafana         grafana/grafana:12.1.1                                                    Up 5 hours (healthy)   127.0.0.1:3000->3000/tcp
+node-exporter   prom/node-exporter:v1.9.1                                                 Up 5 hours             9100/tcp
+prometheus      prom/prometheus:v3.5.0                                                    Up 5 hours (healthy)   127.0.0.1:9090->9090/tcp
+
