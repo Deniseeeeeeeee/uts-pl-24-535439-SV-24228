@@ -1,8 +1,9 @@
 FROM php:8.2-apache
 
-# Ekstensi PHP yang dibutuhkan Laravel + driver MySQL, serta mod_rewrite untuk routing
+# Ekstensi PHP yang dibutuhkan Laravel + driver MySQL, mod_rewrite untuk routing,
+# dan curl untuk HEALTHCHECK (memanggil GET /health)
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends unzip git libzip-dev \
+    && apt-get install -y --no-install-recommends unzip git libzip-dev curl \
     && docker-php-ext-install pdo_mysql zip \
     && a2enmod rewrite \
     && rm -rf /var/lib/apt/lists/*
@@ -27,4 +28,10 @@ COPY . .
 RUN composer dump-autoload --optimize --no-dev --no-interaction \
     && chown -R www-data:www-data storage bootstrap/cache
 
+# Skrip start: migrasi + seed, lalu jalankan Apache.
+# sed membuang karakter CRLF (kalau file dibuat di Windows) supaya skrip bisa jalan di Linux.
+RUN sed -i 's/\r$//' docker-entrypoint.sh && chmod +x docker-entrypoint.sh
+
 EXPOSE 80
+
+CMD ["./docker-entrypoint.sh"]

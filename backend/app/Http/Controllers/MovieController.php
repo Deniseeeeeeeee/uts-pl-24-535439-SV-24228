@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Movie;
+use App\Support\LogContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class MovieController extends Controller
 {
@@ -30,6 +32,15 @@ class MovieController extends Controller
         ]);
 
         $movie = Movie::create($data);
+
+        // Log INFO: data berhasil disimpan (hanya id & nama field, bukan isi data)
+        Log::info('Film baru disimpan', [
+            ...LogContext::actor($request),
+            'action' => 'movie.store',
+            'movie_id' => $movie->id,
+            'fields' => array_keys($data),
+            'reason' => 'user menambahkan film lewat POST /api/movies',
+        ]);
 
         return response()->json([
             'message' => 'Film berhasil ditambahkan.',
@@ -58,7 +69,18 @@ class MovieController extends Controller
             'synopsis' => ['nullable', 'string'],
         ]);
 
-        $movie->update($data);
+        $movie->fill($data);
+        $changed = array_keys($movie->getDirty());
+        $movie->save();
+
+        // Log INFO: data berhasil diperbarui (hanya nama field yang berubah)
+        Log::info('Film diperbarui', [
+            ...LogContext::actor($request),
+            'action' => 'movie.update',
+            'movie_id' => $movie->id,
+            'changed_fields' => $changed,
+            'reason' => 'user mengubah film lewat PUT /api/movies/{id}',
+        ]);
 
         return response()->json([
             'message' => 'Film berhasil diperbarui.',
@@ -67,9 +89,16 @@ class MovieController extends Controller
     }
 
     // DELETE /api/movies/{movie}
-    public function destroy(Movie $movie): JsonResponse
+    public function destroy(Request $request, Movie $movie): JsonResponse
     {
         $movie->delete();
+
+        Log::info('Film dihapus', [
+            ...LogContext::actor($request),
+            'action' => 'movie.destroy',
+            'movie_id' => $movie->id,
+            'reason' => 'user menghapus film lewat DELETE /api/movies/{id}',
+        ]);
 
         return response()->json([
             'message' => 'Film berhasil dihapus.',

@@ -1,0 +1,7 @@
+﻿
+[WARNING] POST /api/login dengan input tidak valid -> HTTP 422
+Login admin -> HTTP 200 (token disimpan di memori saja)
+[WARNING] POST /api/movies dengan data tidak valid -> HTTP 422
+[INFO] POST /api/movies (simpan) -> HTTP 201, id=11
+[INFO] PUT /api/movies/11 (ubah rating) -> HTTP 200
+(Log ERROR gagal konek DB dipicu di langkah 5, saat DB dimatikan.)
