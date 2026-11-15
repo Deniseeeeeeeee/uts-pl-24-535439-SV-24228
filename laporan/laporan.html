@@ -1,374 +1,55 @@
 <!doctype html>
 <html lang="id"><head><meta charset="utf-8"><title>P10_24-535439-SV-24228_Denise_Aditya.pdf</title>
 <style>
-  @page { size: A4; margin: 18mm 16mm; }
-  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5pt; color: #1b1f27; line-height: 1.5; }
-  h1 { font-size: 17pt; margin: 0 0 4px; }
-  h2 { font-size: 13pt; margin: 22px 0 8px; padding-bottom: 4px; border-bottom: 2px solid #e50914; break-after: avoid; }
-  h3 { font-size: 11pt; margin: 14px 0 6px; break-after: avoid; }
-  h4 { font-size: 10pt; margin: 12px 0 4px; break-after: avoid; }
-  .cover { border-left: 5px solid #e50914; padding: 6px 0 6px 14px; margin-bottom: 18px; }
-  .cover table td { padding: 1px 12px 1px 0; }
-  pre { background: #f4f5f7; border: 1px solid #e1e4ea; border-radius: 6px; padding: 8px 10px;
-        font: 8pt/1.4 Consolas, 'Courier New', monospace; white-space: pre-wrap; word-break: break-all;
-        margin: 4px 0 10px; }
-  pre.json { background: #0f1420; color: #d7e0f0; border-color: #0f1420; }
-  table.t { width: 100%; border-collapse: collapse; margin: 6px 0 12px; font-size: 9.5pt; }
-  table.t th, table.t td { border: 1px solid #d9dde4; padding: 5px 7px; vertical-align: top; text-align: left; }
-  table.t th { background: #f0f2f5; }
-  .lvl { display: inline-block; padding: 1px 7px; border-radius: 4px; color: #fff; font-size: 8pt; font-weight: 700; }
-  .lvl.info { background: #2563eb; } .lvl.warning { background: #d97706; } .lvl.error { background: #dc2626; }
-  code { font-family: Consolas, monospace; background: #f0f2f5; padding: 0 3px; border-radius: 3px; }
-  .muted { color: #6b7280; }
-  figure { margin: 10px 0 16px; break-inside: avoid; }
-  figure img { max-width: 100%; border: 1px solid #d9dde4; border-radius: 4px; }
-  figcaption { font-size: 9pt; color: #555; margin-top: 3px; }
-  .avoid { break-inside: avoid; }
+  @page { size: Letter; margin: 1in 1in 1in 1in; }
+  body { font-family: 'Times New Roman', Times, serif; font-size: 12pt; color: #000; margin: 0; }
+  p { line-height: 1.5; text-align: justify; margin: 0 0 12pt; }
+  i { font-style: italic; }
+
+  /* ---- cover ---- */
+  .cover { height: 9in; display: flex; flex-direction: column; align-items: center; text-align: center;
+           page-break-after: always; }
+  .cover .judul { font-weight: bold; font-size: 14pt; line-height: 1.6; margin-top: 0.1in; }
+  .cover .topik { font-weight: bold; font-size: 12pt; margin-top: 4pt; }
+  .cover img { width: 1.95in; margin: 0.35in 0 0.3in; }
+  .cover .oleh { margin-bottom: 8pt; }
+  .cover table { border-collapse: collapse; text-align: left; margin: 0 auto; }
+  .cover td { padding: 5pt 0; vertical-align: top; }
+  .cover td:first-child { width: 1.7in; }
+  .cover .instansi { font-weight: bold; font-size: 14pt; line-height: 1.5; margin-top: auto; }
+  .cover .instansi div { margin-bottom: 10pt; }
+
+  /* ---- isi ---- */
+  .kepala { text-align: center; font-weight: bold; line-height: 1.6; margin-bottom: 18pt; }
+  .item { break-inside: avoid; margin-bottom: 14pt; }
+  .fig { text-align: center; margin: 6pt 0 14pt; }
+  .fig img { max-width: 100%; max-height: 4.1in; display: block; margin: 0 auto 6pt; }
+  .missing { color: #b00; text-align: center; }
 </style></head><body>
 
 <div class="cover">
-  <h1>Praktikum P10 — Logging Terstruktur &amp; Health Check pada Docker Compose</h1>
+  <div class="judul">LAPORAN PRAKTIKUM<br>KONSTRUKSI DAN EVOLUSI PERANGKAT LUNAK<br>PERTEMUAN 10</div>
+  <div class="topik">LOGGING TERSTRUKTUR &amp; HEALTH CHECK</div>
+  <img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/laporan/logo-ugm.png" alt="Logo UGM">
+  <div class="oleh">Disusun oleh:</div>
   <table>
     <tr><td>Nama</td><td>: Denise Aditya</td></tr>
     <tr><td>NIM</td><td>: 24/535439/SV/24228</td></tr>
-    <tr><td>Tanggal</td><td>: 15-11-2026</td></tr>
-    <tr><td>Branch</td><td>: <code>feature/p10-logging-health</code></td></tr>
+    <tr><td>Kelas</td><td>: PL5A1</td></tr>
+    <tr><td>Dosen Pengampu</td><td>: Galih Malela Darmaji</td></tr>
   </table>
+  <div class="instansi">
+    <div>PROGRAM STUDI D-IV TEKNOLOGI REKAYASA PERANGKAT LUNAK</div>
+    <div>DEPARTEMEN TEKNIK ELEKTRO DAN INFORMATIKA</div>
+    <div>SEKOLAH VOKASI</div>
+    <div>UNIVERSITAS GADJAH MADA</div>
+    <div>YOGYAKARTA</div>
+    <div>2026</div>
+  </div>
 </div>
 
-<h2>1. Ringkasan Perubahan</h2>
-<table class="t">
-  <tr><th style="width:28%">Tugas</th><th>Implementasi</th></tr>
-  <tr><td>Log ke stdout/stderr</td><td><code>LOG_CHANNEL=stderr</code> + <code>LOG_STDERR_FORMATTER=Monolog\Formatter\JsonFormatter</code> di <code>compose.yaml</code>. Tidak ada file di <code>storage/logs</code>.</td></tr>
-  <tr><td>Log terstruktur</td><td><code>MovieController</code> (INFO), <code>Handler::invalidJson</code> (WARNING), <code>Handler</code> reportable + <code>HealthController</code> (ERROR). Context dibuat oleh <code>App\Support\LogContext</code>.</td></tr>
-  <tr><td>GET /health</td><td><code>HealthController</code>: <code>SELECT 1</code> ke DB dan put/get/forget cache, tiap cek dalam try/catch; 200 atau 503 + <code>failed</code>.</td></tr>
-  <tr><td>Healthcheck compose</td><td>Service <code>app</code> memakai <code>curl</code> (ditambahkan ke image), <code>frontend</code> memakai <code>wget</code>, <code>db</code> memakai <code>mysqladmin ping</code>.</td></tr>
-  <tr><td>Logging driver</td><td><code>json-file</code>, <code>max-size: 10m</code>, <code>max-file: 3</code> untuk semua service (YAML anchor).</td></tr>
-</table>
-
-<h2>2. Log Laravel ke stdout/stderr</h2>
-<p>Image backend memakai <b>php:8.2-apache (mod_php)</b>, bukan php-fpm. Pada mod_php, PHP berjalan di dalam proses Apache sehingga
-<code>php://stderr</code> langsung menjadi stderr container. Pada php-fpm hal ini tidak otomatis: output worker dibuang kecuali
-<code>catch_workers_output = yes</code> dan <code>error_log = /proc/self/fd/2</code> diaktifkan. Di image ini juga <code>error.log</code> Apache sudah
-diarahkan ke <code>/dev/stderr</code>. Bukti: variabel log aktif dan folder <code>storage/logs</code> kosong.</p>
-<pre class="">PS&gt; docker compose exec -T app printenv LOG_CHANNEL LOG_STDERR_FORMATTER
-stderr
-Monolog\Formatter\JsonFormatter
-
-PS&gt; docker compose exec -T app ls -la storage/logs /var/log/apache2
-/var/log/apache2:
-total 8
-drwxrwxrwt 2 www-data www-data 4096 Nov  5 07:27 .
-drwxr-xr-x 1 root     root     4096 Nov  5 07:27 ..
-lrwxrwxrwx 1 www-data www-data   11 Nov  5 07:27 access.log -&gt; /dev/stdout
-lrwxrwxrwx 1 www-data www-data   11 Nov  5 07:27 error.log -&gt; /dev/stderr
-lrwxrwxrwx 1 www-data www-data   11 Nov  5 07:27 other_vhosts_access.log -&gt; /dev/stdout
-
-storage/logs:
-total 12
-drwxr-xr-x 1 www-data www-data 4096 Oct 24 09:26 .
-drwxr-xr-x 1 www-data www-data 4096 Feb 13  2024 ..</pre>
-
-<h2>3. Potongan Log Terstruktur</h2>
-<p>Semua log berformat JSON dengan <code>context</code> berisi <b>siapa</b> (<code>user_id</code>, <code>ip</code>), <b>aksi</b> (<code>action</code>, <code>method</code>, <code>path</code>)
-dan <b>sebab</b> (<code>reason</code>). Email, nama, password, token, dan isi data tidak pernah dicatat.</p>
-<h4><span class="lvl info">INFO</span> Simpan data film</h4><pre class="json">{
-  &quot;message&quot;: &quot;Film baru disimpan&quot;,
-  &quot;context&quot;: {
-    &quot;user_id&quot;: 1,
-    &quot;ip&quot;: &quot;172.18.0.1&quot;,
-    &quot;method&quot;: &quot;POST&quot;,
-    &quot;path&quot;: &quot;/api/movies&quot;,
-    &quot;action&quot;: &quot;movie.store&quot;,
-    &quot;movie_id&quot;: 11,
-    &quot;fields&quot;: [
-      &quot;title&quot;,
-      &quot;director&quot;,
-      &quot;genre&quot;,
-      &quot;release_year&quot;,
-      &quot;rating&quot;,
-      &quot;synopsis&quot;
-    ],
-    &quot;reason&quot;: &quot;user menambahkan film lewat POST /api/movies&quot;
-  },
-  &quot;level&quot;: 200,
-  &quot;level_name&quot;: &quot;INFO&quot;,
-  &quot;channel&quot;: &quot;production&quot;,
-  &quot;datetime&quot;: &quot;2026-11-15T15:48:40.520472+00:00&quot;,
-  &quot;extra&quot;: {}
-}</pre><h4><span class="lvl info">INFO</span> Ubah data film</h4><pre class="json">{
-  &quot;message&quot;: &quot;Film diperbarui&quot;,
-  &quot;context&quot;: {
-    &quot;user_id&quot;: 1,
-    &quot;ip&quot;: &quot;172.18.0.1&quot;,
-    &quot;method&quot;: &quot;PUT&quot;,
-    &quot;path&quot;: &quot;/api/movies/11&quot;,
-    &quot;action&quot;: &quot;movie.update&quot;,
-    &quot;movie_id&quot;: 11,
-    &quot;changed_fields&quot;: [
-      &quot;rating&quot;
-    ],
-    &quot;reason&quot;: &quot;user mengubah film lewat PUT /api/movies/{id}&quot;
-  },
-  &quot;level&quot;: 200,
-  &quot;level_name&quot;: &quot;INFO&quot;,
-  &quot;channel&quot;: &quot;production&quot;,
-  &quot;datetime&quot;: &quot;2026-11-15T15:48:40.663169+00:00&quot;,
-  &quot;extra&quot;: {}
-}</pre><h4><span class="lvl warning">WARNING</span> Validasi login gagal</h4><pre class="json">{
-  &quot;message&quot;: &quot;Validasi input gagal&quot;,
-  &quot;context&quot;: {
-    &quot;user_id&quot;: null,
-    &quot;ip&quot;: &quot;172.18.0.1&quot;,
-    &quot;method&quot;: &quot;POST&quot;,
-    &quot;path&quot;: &quot;/api/login&quot;,
-    &quot;action&quot;: &quot;POST api/login&quot;,
-    &quot;reason&quot;: &quot;validation_failed&quot;,
-    &quot;failed_fields&quot;: [
-      &quot;email&quot;,
-      &quot;password&quot;
-    ],
-    &quot;rules_failed&quot;: {
-      &quot;email&quot;: [
-        &quot;Email&quot;
-      ],
-      &quot;password&quot;: [
-        &quot;Required&quot;
-      ]
-    }
-  },
-  &quot;level&quot;: 300,
-  &quot;level_name&quot;: &quot;WARNING&quot;,
-  &quot;channel&quot;: &quot;production&quot;,
-  &quot;datetime&quot;: &quot;2026-11-15T15:48:37.955948+00:00&quot;,
-  &quot;extra&quot;: {}
-}</pre><h4><span class="lvl warning">WARNING</span> Validasi data film gagal</h4><pre class="json">{
-  &quot;message&quot;: &quot;Validasi input gagal&quot;,
-  &quot;context&quot;: {
-    &quot;user_id&quot;: 1,
-    &quot;ip&quot;: &quot;172.18.0.1&quot;,
-    &quot;method&quot;: &quot;POST&quot;,
-    &quot;path&quot;: &quot;/api/movies&quot;,
-    &quot;action&quot;: &quot;movies.store&quot;,
-    &quot;reason&quot;: &quot;validation_failed&quot;,
-    &quot;failed_fields&quot;: [
-      &quot;title&quot;,
-      &quot;release_year&quot;,
-      &quot;rating&quot;
-    ],
-    &quot;rules_failed&quot;: {
-      &quot;title&quot;: [
-        &quot;Required&quot;
-      ],
-      &quot;release_year&quot;: [
-        &quot;Min&quot;
-      ],
-      &quot;rating&quot;: [
-        &quot;Between&quot;
-      ]
-    }
-  },
-  &quot;level&quot;: 300,
-  &quot;level_name&quot;: &quot;WARNING&quot;,
-  &quot;channel&quot;: &quot;production&quot;,
-  &quot;datetime&quot;: &quot;2026-11-15T15:48:40.417120+00:00&quot;,
-  &quot;extra&quot;: {}
-}</pre><h4><span class="lvl error">ERROR</span> Gagal konek DB (request API)</h4><pre class="json">{
-  &quot;message&quot;: &quot;Gagal terhubung ke database&quot;,
-  &quot;context&quot;: {
-    &quot;user_id&quot;: null,
-    &quot;ip&quot;: &quot;172.18.0.1&quot;,
-    &quot;method&quot;: &quot;GET&quot;,
-    &quot;path&quot;: &quot;/api/movies&quot;,
-    &quot;action&quot;: &quot;movies.index&quot;,
-    &quot;component&quot;: &quot;database&quot;,
-    &quot;reason&quot;: &quot;SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for db failed: Temporary failure in name resolution&quot;,
-    &quot;exception&quot;: &quot;QueryException&quot;
-  },
-  &quot;level&quot;: 400,
-  &quot;level_name&quot;: &quot;ERROR&quot;,
-  &quot;channel&quot;: &quot;production&quot;,
-  &quot;datetime&quot;: &quot;2026-11-15T15:49:31.708216+00:00&quot;,
-  &quot;extra&quot;: {}
-}</pre><h4><span class="lvl error">ERROR</span> Gagal konek DB (health check)</h4><pre class="json">{
-  &quot;message&quot;: &quot;Health check: gagal terhubung ke database&quot;,
-  &quot;context&quot;: {
-    &quot;user_id&quot;: null,
-    &quot;ip&quot;: &quot;127.0.0.1&quot;,
-    &quot;method&quot;: &quot;GET&quot;,
-    &quot;path&quot;: &quot;/health&quot;,
-    &quot;action&quot;: &quot;health.check_database&quot;,
-    &quot;component&quot;: &quot;database&quot;,
-    &quot;reason&quot;: &quot;SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for db failed: Temporary failure in name resolution&quot;,
-    &quot;exception&quot;: &quot;QueryException&quot;,
-    &quot;latency_ms&quot;: 5021.68
-  },
-  &quot;level&quot;: 400,
-  &quot;level_name&quot;: &quot;ERROR&quot;,
-  &quot;channel&quot;: &quot;production&quot;,
-  &quot;datetime&quot;: &quot;2026-11-15T15:49:11.457609+00:00&quot;,
-  &quot;extra&quot;: {}
-}</pre>
-
-<h3>Alasan memilih alur yang diberi log</h3>
-<table class="t avoid">
-  <tr><th style="width:17%">Level</th><th style="width:25%">Alur</th><th>Alasan</th></tr>
-  <tr><td><span class="lvl info">INFO</span></td><td>Simpan / ubah / hapus film</td>
-      <td>Operasi yang mengubah data. Log menjadi jejak audit: siapa (user_id) mengubah film mana (movie_id) dan field apa saja, sehingga perubahan atau kehilangan data bisa ditelusuri. Isi data tidak dicatat, cukup id dan nama field.</td></tr>
-  <tr><td><span class="lvl warning">WARNING</span></td><td>Validasi input gagal (login & film)</td>
-      <td>Bukan kesalahan server, tetapi sinyal yang perlu diawasi: lonjakan di <code>/api/login</code> bisa berarti percobaan brute force, dan lonjakan di <code>/api/movies</code> bisa berarti bug di frontend. Yang dicatat hanya nama field dan rule yang gagal, bukan nilainya, karena nilai bisa berisi password atau email.</td></tr>
-  <tr><td><span class="lvl error">ERROR</span></td><td>Gagal konek ke database</td>
-      <td>Penyebab paling umum seluruh API gagal (HTTP 500). Harus langsung terlihat dan bisa dikaitkan dengan status <i>unhealthy</i>. Pesan <code>QueryException</code> sengaja tidak dicatat karena memuat SQL beserta binding (misalnya email saat login); yang dicatat hanya pesan PDO, misalnya <code>getaddrinfo for db failed</code>.</td></tr>
-</table>
-
-<h2>4. docker compose ps</h2>
-<h3>Keadaan sehat</h3>
-<pre class="">PS&gt; docker compose ps
-NAME                                   IMAGE                                                                     COMMAND                  SERVICE    CREATED          STATUS                        PORTS
-uts-pl-24-535439-sv-24228-app-1        uts-pl-24-535439-sv-24228-app                                             &quot;docker-php-entrypoi…&quot;   app        10 seconds ago   Up 7 seconds (healthy)        0.0.0.0:8000-&gt;80/tcp, [::]:8000-&gt;80/tcp
-uts-pl-24-535439-sv-24228-db-1         mysql:8.0                                                                 &quot;docker-entrypoint.s…&quot;   db         2 days ago       Up About a minute (healthy)   3306/tcp, 33060/tcp
-uts-pl-24-535439-sv-24228-frontend-1   sha256:d48653450ff5b19bf6de5339e47b73b45ca67532d381111dde65f327a0d31211   &quot;/docker-entrypoint.…&quot;   frontend   2 days ago       Up About a minute (healthy)   0.0.0.0:8080-&gt;80/tcp, [::]:8080-&gt;80/tcp</pre>
-<h3>Keadaan sakit (setelah <code>docker compose stop db</code>)</h3>
-<pre class="">PS&gt; docker compose stop db
- Container uts-pl-24-535439-sv-24228-db-1 Stopping 
- Container uts-pl-24-535439-sv-24228-db-1 Stopped 
-
-Menunggu service app menjadi unhealthy...
-app unhealthy setelah ~28 detik
-[ERROR] GET /api/movies saat DB mati -&gt; HTTP 500</pre>
-<pre class="">PS&gt; docker compose ps -a
-NAME                                   IMAGE                                                                     COMMAND                  SERVICE    CREATED         STATUS                        PORTS
-uts-pl-24-535439-sv-24228-app-1        uts-pl-24-535439-sv-24228-app                                             &quot;docker-php-entrypoi…&quot;   app        2 minutes ago   Up 2 minutes (unhealthy)      0.0.0.0:8000-&gt;80/tcp, [::]:8000-&gt;80/tcp
-uts-pl-24-535439-sv-24228-db-1         mysql:8.0                                                                 &quot;docker-entrypoint.s…&quot;   db         2 days ago      Exited (137) 34 seconds ago   
-uts-pl-24-535439-sv-24228-frontend-1   sha256:d48653450ff5b19bf6de5339e47b73b45ca67532d381111dde65f327a0d31211   &quot;/docker-entrypoint.…&quot;   frontend   2 days ago      Up 4 minutes (healthy)        0.0.0.0:8080-&gt;80/tcp, [::]:8080-&gt;80/tcp</pre>
-<h3>Pulih (setelah <code>docker compose start db</code>)</h3>
-<pre class="">PS&gt; docker compose start db
- Container uts-pl-24-535439-sv-24228-db-1 Starting 
- Container uts-pl-24-535439-sv-24228-db-1 Started 
-
-app kembali healthy setelah ~0 detik</pre>
-<pre class="">PS&gt; docker compose ps
-NAME                                   IMAGE                                                                     COMMAND                  SERVICE    CREATED         STATUS                   PORTS
-uts-pl-24-535439-sv-24228-app-1        uts-pl-24-535439-sv-24228-app                                             &quot;docker-php-entrypoi…&quot;   app        4 minutes ago   Up 4 minutes (healthy)   0.0.0.0:8000-&gt;80/tcp, [::]:8000-&gt;80/tcp
-uts-pl-24-535439-sv-24228-db-1         mysql:8.0                                                                 &quot;docker-entrypoint.s…&quot;   db         2 days ago      Up 8 seconds (healthy)   3306/tcp, 33060/tcp
-uts-pl-24-535439-sv-24228-frontend-1   sha256:d48653450ff5b19bf6de5339e47b73b45ca67532d381111dde65f327a0d31211   &quot;/docker-entrypoint.…&quot;   frontend   2 days ago      Up 5 minutes (healthy)   0.0.0.0:8080-&gt;80/tcp, [::]:8080-&gt;80/tcp</pre>
-
-<h2>5. Balasan GET /health</h2>
-<h3>Sehat — HTTP 200</h3>
-<pre class="">PS&gt; curl.exe -s -i http://localhost:8000/health
-HTTP/1.1 200 OK
-Date: Sun, 15 Nov 2026 15:48:22 GMT
-Server: Apache/2.4.69 (Debian)
-X-Powered-By: PHP/8.2.35
-Cache-Control: no-cache, private
-Transfer-Encoding: chunked
-Content-Type: application/json
-
-{
-  &quot;status&quot;: &quot;ok&quot;,
-  &quot;checks&quot;: {
-    &quot;database&quot;: {
-      &quot;status&quot;: &quot;ok&quot;,
-      &quot;latency_ms&quot;: 9.06
-    },
-    &quot;cache&quot;: {
-      &quot;status&quot;: &quot;ok&quot;,
-      &quot;driver&quot;: &quot;file&quot;,
-      &quot;latency_ms&quot;: 3.06
-    }
-  },
-  &quot;timestamp&quot;: &quot;2026-11-15T15:48:22+00:00&quot;
-}</pre>
-<h3>Sakit — HTTP 503 (DB mati, endpoint tidak crash)</h3>
-<pre class="">PS&gt; curl.exe -s -i http://localhost:8000/health
-HTTP/1.1 503 Service Unavailable
-Date: Sun, 15 Nov 2026 15:50:14 GMT
-Server: Apache/2.4.69 (Debian)
-X-Powered-By: PHP/8.2.35
-Cache-Control: no-cache, private
-Connection: close
-Transfer-Encoding: chunked
-Content-Type: application/json
-
-{
-  &quot;status&quot;: &quot;fail&quot;,
-  &quot;checks&quot;: {
-    &quot;database&quot;: {
-      &quot;status&quot;: &quot;fail&quot;,
-      &quot;error&quot;: &quot;Tidak dapat terhubung ke database&quot;
-    },
-    &quot;cache&quot;: {
-      &quot;status&quot;: &quot;ok&quot;,
-      &quot;driver&quot;: &quot;file&quot;,
-      &quot;latency_ms&quot;: 2.32
-    }
-  },
-  &quot;timestamp&quot;: &quot;2026-11-15T15:50:18+00:00&quot;,
-  &quot;failed&quot;: [
-    &quot;database&quot;
-  ]
-}</pre>
-<p>Catatan: saat DB dimatikan, nama host <code>db</code> hilang dari DNS Docker sehingga lookup DNS memakan waktu ~5 detik (sudah dipangkas dari ~15 detik
-dengan <code>dns_opt timeout:1 attempts:1</code> dan <code>PDO::ATTR_TIMEOUT=3</code>). Karena itu batas <code>curl --max-time</code> di healthcheck dibuat 8 detik.</p>
-
-<h2>6. Cuplikan compose.yaml</h2>
-<h3>Logging driver (json-file + rotasi)</h3>
-<pre class="">x-logging: &amp;default-logging
-  driver: json-file
-  options:
-    max-size: &quot;10m&quot;
-    max-file: &quot;3&quot;</pre>
-<p>Konfigurasi yang benar-benar aktif di container (<code>docker inspect</code>):</p>
-<pre class="">PS&gt; docker inspect -f &quot;db {{json .HostConfig.LogConfig}}&quot; 52d99fa7adce92b013f759fd49f7a153320312227f7a5e89043091853b2f4ebd
-db {&quot;Type&quot;:&quot;json-file&quot;,&quot;Config&quot;:{&quot;max-file&quot;:&quot;3&quot;,&quot;max-size&quot;:&quot;10m&quot;}}
-
-PS&gt; docker inspect -f &quot;app {{json .HostConfig.LogConfig}}&quot; 4c3dffdef7cf36183e5fbea50cce7645b8ed168d273d2bd7137692ad275931b8
-app {&quot;Type&quot;:&quot;json-file&quot;,&quot;Config&quot;:{&quot;max-file&quot;:&quot;3&quot;,&quot;max-size&quot;:&quot;10m&quot;}}
-
-PS&gt; docker inspect -f &quot;frontend {{json .HostConfig.LogConfig}}&quot; 02fcc3499b985de761eac8c4d099877074cbfc0c8c94a2206d813a645c533b83
-frontend {&quot;Type&quot;:&quot;json-file&quot;,&quot;Config&quot;:{&quot;max-file&quot;:&quot;3&quot;,&quot;max-size&quot;:&quot;10m&quot;}}</pre>
-<h3>Healthcheck service app</h3>
-<pre class="">  app:
-    # P10: Docker memanggil GET /health di dalam container.
-    # /health membalas 503 kalau DB/cache gagal -&gt; curl -f keluar non-zero -&gt; unhealthy.
-    healthcheck:
-      # Saat DB mati, lookup DNS &quot;db&quot; masih butuh ~5 detik, jadi batas curl 8 detik.
-      test: [&quot;CMD&quot;, &quot;curl&quot;, &quot;-fsS&quot;, &quot;--max-time&quot;, &quot;8&quot;, &quot;http://localhost/health&quot;]
-      interval: 10s
-      timeout: 10s
-      retries: 3
-      start_period: 40s</pre>
-<h3>Healthcheck service frontend & db</h3>
-<pre class="">  frontend:
-    # wget sudah tersedia di image nginx:alpine (BusyBox)
-    healthcheck:
-      test: [&quot;CMD&quot;, &quot;wget&quot;, &quot;-q&quot;, &quot;--spider&quot;, &quot;http://127.0.0.1/&quot;]
-      interval: 15s
-      timeout: 5s
-      retries: 3
-      start_period: 10s</pre>
-<pre class="">  db:
-    healthcheck:
-      test: [&quot;CMD-SHELL&quot;, &quot;mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD --silent&quot;]
-      interval: 5s
-      timeout: 5s
-      retries: 30
-      start_period: 20s</pre>
-<h3>Variabel log service app</h3>
-<pre class=""># P10: logging driver json-file dengan rotasi.
-      # P10: log Laravel ke stderr container (bukan storage/logs/laravel.log),
-      # dalam format JSON supaya context array terbaca sebagai field.
-      LOG_CHANNEL: stderr
-      LOG_STDERR_FORMATTER: Monolog\Formatter\JsonFormatter
-      LOG_LEVEL: info</pre>
-
-<h2>7. Screenshot</h2>
-<figure><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/01-kode-log-info.png"><figcaption>Gambar 1. 01 kode log info</figcaption></figure><figure><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/02-kode-log-warning-error.png"><figcaption>Gambar 2. 02 kode log warning error</figcaption></figure><figure><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/03-kode-health.png"><figcaption>Gambar 3. 03 kode health</figcaption></figure><figure><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/04-compose-healthcheck.png"><figcaption>Gambar 4. 04 compose healthcheck</figcaption></figure><figure><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/05-compose-logging.png"><figcaption>Gambar 5. 05 compose logging</figcaption></figure><figure><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/06-ps-sehat.png"><figcaption>Gambar 6. 06 ps sehat</figcaption></figure><figure><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/07-log-limit.png"><figcaption>Gambar 7. 07 log limit</figcaption></figure><figure><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/08-health-200.png"><figcaption>Gambar 8. 08 health 200</figcaption></figure><figure><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/09-log-info-warning.png"><figcaption>Gambar 9. 09 log info warning</figcaption></figure><figure><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/10-ps-unhealthy.png"><figcaption>Gambar 10. 10 ps unhealthy</figcaption></figure><figure><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/11-health-503.png"><figcaption>Gambar 11. 11 health 503</figcaption></figure><figure><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/12-log-error-db.png"><figcaption>Gambar 12. 12 log error db</figcaption></figure><figure><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/13-ps-pulih.png"><figcaption>Gambar 13. 13 ps pulih</figcaption></figure>
-
-<h2>8. Kesimpulan</h2>
-<p>Log aplikasi kini keluar ke stderr dalam format JSON sehingga bisa dibaca lewat <code>docker compose logs app</code> dan dirotasi oleh driver
-<code>json-file</code> (maks 3 × 10 MB per service). Endpoint <code>/health</code> benar-benar memeriksa DB dan cache, membalas 503 dengan komponen yang gagal
-tanpa crash, dan dipakai Docker sebagai healthcheck sehingga status container berubah menjadi <i>unhealthy</i> saat DB mati lalu kembali <i>healthy</i>
-otomatis setelah DB dinyalakan.</p>
+<div class="kepala">PERTEMUAN 10<br>LOGGING TERSTRUKTUR &amp; HEALTH CHECK</div>
+<section class="item"><div class="fig"><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/01-kode-log-info.png"></div><p>Log terstruktur tingkat INFO ditambahkan pada method <i>store</i> di <i>MovieController</i>, tepat setelah <i>Movie::create</i> berhasil menyimpan data. Konteks log berisi hasil <i>LogContext::actor</i> (user_id, ip, method, dan path), action movie.store, movie_id, fields, dan reason. Yang dicatat pada fields hanya nama kolom, bukan isinya. Alur simpan data dipilih karena operasi ini mengubah isi database. Log tersebut menjadi jejak audit tentang siapa menambahkan data, data mana yang ditambahkan, dan kapan. Log yang sama juga ditambahkan pada <i>update</i>, yang mencatat changed_fields, dan pada <i>destroy</i>.</p></section><section class="item"><div class="fig"><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/02-kode-log-warning-error.png"></div><p>Log tingkat ERROR untuk kegagalan koneksi database ditempatkan di <i>app/Exceptions/Handler.php</i> melalui callback <i>reportable</i> untuk <i>QueryException</i> dan <i>PDOException</i>. Jika <i>causedByLostConnection</i> bernilai benar, dicatat pesan “Gagal terhubung ke database” dengan component database dan reason berupa pesan PDO asli. Pesan <i>QueryException</i> sengaja tidak dipakai karena memuat SQL beserta nilai binding, misalnya email saat login. Alur ini dipilih karena kegagalan koneksi database membuat seluruh API gagal (HTTP 500) sehingga harus segera terlihat. Pada berkas yang sama, method <i>invalidJson</i> menulis log WARNING ketika validasi gagal. Log itu hanya memuat failed_fields dan rules_failed tanpa nilai input. Validasi gagal dipilih karena lonjakannya pada /api/login dapat menandakan percobaan <i>brute force</i>, sedangkan lonjakan pada /api/movies dapat menandakan kesalahan di sisi klien.</p></section><section class="item"><div class="fig"><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/03-kode-health.png"></div><p>Endpoint GET /health dibuat pada <i>HealthController</i>. Pemeriksaan database menjalankan <i>DB::select('SELECT 1')</i> di dalam blok try/catch. Jika gagal, exception ditangkap, log ERROR dengan action health.check_database ditulis beserta latency_ms, lalu koneksi dibuang dengan <i>DB::purge()</i> agar pemeriksaan berikutnya membuat koneksi baru. Balasannya berupa status fail dengan pesan umum tanpa detail teknis. Pemeriksaan cache dilakukan dengan cara serupa, yaitu <i>Cache::put</i> lalu <i>Cache::get</i> dengan nilai acak. Endpoint membalas 200 bila semua komponen sehat dan 503 beserta daftar failed bila ada yang gagal. Route /health didaftarkan tanpa middleware session maupun auth sehingga tetap dapat menjawab ketika database mati.</p></section><section class="item"><div class="fig"><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/04-compose-healthcheck.png"></div><p>Service app pada <i>compose.yaml</i> diberi healthcheck yang menjalankan <i>curl -fsS</i> ke http://localhost/health dengan interval 10s, timeout 10s, retries 3, dan start_period 40s. Opsi -f membuat curl keluar dengan kode non-zero saat /health membalas 503, sehingga Docker menandai container sebagai unhealthy. Paket curl ditambahkan ke Dockerfile backend agar perintah ini tersedia di dalam image. Lookup DNS ke host db yang sudah dimatikan sempat memakan sekitar 15 detik. Karena itu ditambahkan dns_opt timeout:1 dan attempts:1 serta DB_CONNECT_TIMEOUT 3 detik, yang memangkasnya menjadi sekitar 5 detik, dan batas waktu curl ditetapkan 8 detik. Service frontend memakai healthcheck wget, sedangkan db memakai mysqladmin ping.</p></section><section class="item"><div class="fig"><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/05-compose-logging.png"></div><p>Pembatasan ukuran log didefinisikan sekali dalam blok <i>x-logging</i> sebagai YAML anchor dengan driver json-file, max-size 10m, dan max-file 3. Blok ini dipakai oleh ketiga service melalui <i>logging: *default-logging</i>. Dengan konfigurasi tersebut Docker merotasi berkas log setiap kali mencapai 10 MB dan hanya menyimpan tiga berkas terakhir, sehingga log tiap service paling besar sekitar 30 MB dan tidak memenuhi disk host. Pada environment service app juga ditetapkan LOG_CHANNEL=stderr dan LOG_STDERR_FORMATTER=Monolog\Formatter\JsonFormatter agar log Laravel keluar ke stderr dalam format JSON.</p></section><section class="item"><div class="fig"><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/06-ps-sehat.png"></div><p>Skenario pengujian dijalankan dengan skrip <i>bukti/skenario.ps1</i>, yang menyimpan output setiap langkah ke folder bukti/. Setelah <i>docker compose up -d --build</i>, perintah <i>docker compose ps</i> menampilkan ketiga service, yaitu app, db, dan frontend, dengan status Up (healthy). Status healthy pada app menunjukkan bahwa healthcheck berhasil memanggil /health di dalam container dan mendapat balasan sukses.</p></section><section class="item"><div class="fig"><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/07-log-limit.png"></div><p>Perintah <i>printenv</i> di dalam container app menampilkan LOG_CHANNEL bernilai stderr dengan formatter JsonFormatter. Folder storage/logs kosong, dan berkas error.log milik Apache merupakan symlink ke /dev/stderr. Hasil ini membuktikan tidak ada log yang ditulis ke berkas di dalam container; seluruh log keluar melalui stderr dan dapat dibaca dengan <i>docker compose logs</i>. Image backend memakai php:8.2-apache (mod_php), bukan php-fpm. Pada mod_php, output php://stderr langsung menjadi stderr container, sedangkan php-fpm memerlukan pengaturan <i>catch_workers_output = yes</i>. Selanjutnya, <i>docker inspect</i> pada .HostConfig.LogConfig ketiga container menampilkan Type json-file dengan max-file 3 dan max-size 10m. Artinya pembatasan ukuran log benar-benar aktif, tidak hanya tertulis di compose.yaml.</p></section><section class="item"><div class="fig"><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/08-health-200.png"></div><p>Dalam keadaan sehat, <i>curl -i http://localhost:8000/health</i> membalas HTTP/1.1 200 OK dengan Content-Type application/json. Body balasan berisi status ok beserta hasil tiap komponen: database ok dengan latency 9,06 ms, dan cache ok dengan driver file serta latency 3,06 ms. Balasan ini menunjukkan kedua komponen benar-benar diperiksa, tidak hanya mengembalikan teks tetap.</p></section><section class="item"><div class="fig"><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/09-log-info-warning.png"></div><p>Ketiga jenis log dipicu dengan mengirim request ke API. Login dengan email tidak valid dan password kosong menghasilkan HTTP 422 dan log WARNING berisi user_id null, ip 172.18.0.1, action POST api/login, serta failed_fields email dan password, tanpa mencatat nilai keduanya. Pengiriman data film tidak valid setelah login menghasilkan WARNING dengan user_id 1 dan failed_fields title, release_year, dan rating. Penyimpanan film baru menghasilkan HTTP 201 dan log INFO “Film baru disimpan” dengan movie_id 11, lalu pengubahan rating menghasilkan INFO “Film diperbarui” dengan changed_fields rating. Setiap log memuat siapa pelakunya (user_id dan ip), aksi yang dilakukan (action, method, dan path), serta sebabnya (reason). Token login hanya disimpan di variabel skrip dan tidak muncul di log.</p></section><section class="item"><div class="fig"><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/10-ps-unhealthy.png"></div><p>Database kemudian dimatikan dengan <i>docker compose stop db</i>. Service app berubah menjadi unhealthy setelah sekitar 28 detik, sesuai konfigurasi tiga kali gagal berturut-turut (retries 3) dengan interval 10 detik. Output <i>docker compose ps -a</i> menampilkan db berstatus Exited dan app berstatus Up (unhealthy). Frontend tetap healthy karena hanya menyajikan berkas statis. Request GET /api/movies yang dikirim saat database mati dibalas HTTP 500.</p></section><section class="item"><div class="fig"><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/11-health-503.png"></div><p>Saat database mati, <i>curl -i http://localhost:8000/health</i> tetap mendapat jawaban, yaitu HTTP/1.1 503 Service Unavailable. Body balasan berisi status fail, komponen database fail dengan pesan “Tidak dapat terhubung ke database”, cache tetap ok, dan failed berisi [“database”]. Endpoint tidak crash karena exception koneksi ditangkap, dan balasan menyebutkan dengan tepat komponen mana yang gagal.</p></section><section class="item"><div class="fig"><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/12-log-error-db.png"></div><p>Output <i>docker compose logs app</i> selama database mati menampilkan dua sumber log ERROR. Yang pertama adalah “Health check: gagal terhubung ke database” dari healthcheck Docker (ip 127.0.0.1) dengan action health.check_database, reason getaddrinfo for db failed, dan latency sekitar 5.000 ms. Yang kedua adalah “Gagal terhubung ke database” dari request GET /api/movies (ip 172.18.0.1, action movies.index) yang dicatat oleh Handler. Kedua log tidak memuat query SQL maupun data pengguna.</p></section><section class="item"><div class="fig"><img src="file:///C:/Users/ACER/uts-pl-24-535439-sv-24228/screenshots/13-ps-pulih.png"></div><p>Database dinyalakan kembali dengan <i>docker compose start db</i>. Database menjadi healthy dalam sekitar 7 detik, dan app ikut kembali healthy tanpa perlu di-restart karena pemeriksaan berikutnya membuat koneksi baru. Pemanggilan /health pun kembali membalas 200 OK. Rangkaian sehat, unhealthy, lalu kembali healthy ini membuktikan bahwa healthcheck bekerja dua arah.</p></section>
+<p>Seluruh perubahan dikerjakan di branch <i>feature/p10-logging-health</i> dan sudah di-commit. Commit utamanya adalah 6eb1c7d dengan pesan “P10: log terstruktur ke stderr, endpoint /health, healthcheck &amp; rotasi log”. Output setiap langkah pengujian tersimpan di folder bukti/, dan screenshot di folder screenshots/.</p>
 
 </body></html>
